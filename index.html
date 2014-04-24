@@ -11,7 +11,7 @@
 
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
-	
+
 </head>
 <body>
 	
@@ -22,16 +22,53 @@
 
 	<div class="container">
 
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
+		<div class="starter-template">
 
-    </div>
+			<label for="codigo_local">Código de Local</label>
+			<input type="text" id="codigo_local" name="codigo_local" placeholder="Ingrese el codigo de local">
+			<button type="submit" onclick="get_photo();">Consultar</button>
 
+			<H1>Fotos del Capítulo 3</H1>
+			<div id="cap3" name="cap3">
+			</div>
 
-   	<script type="text/javascript" src="js/jquery.min.js"></script>
-   	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		</div>
+
+	</div>
+
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 
 </body>
 </html>
+
+<script type="text/javascript">
+		
+	// $(document).ready(function(){
+
+		function get_photo() {
+
+			var html = '';
+			var cod = $('#codigo_local').val();
+
+			$.get('xml/photo.xml', function(d) {
+			
+				$(d).find('marker[id_local="'+cod+'"]').each(function() {
+					var $marker = $(this);
+					var codigo = $marker.attr('id_local');
+					var predio = $marker.attr('nro_pred');
+					var ruta3 = $marker.attr('ruta_foto3');
+
+					// html += '<p> el codigo = '+codigo+', el predio = '+predio+' y la ruta = '+ruta3+' </p>';
+					html += '<img src="img/fotos/'+ruta3+'" width="100%">'
+
+				});
+
+				$('#cap3').html(html);
+			});
+			
+		}
+
+	// });
+
+</script>

@@ -12,35 +12,13 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 
-</head>
-<body>
-	
-	<div id="header" style="display: block;">
-		<a id="logo" href="#"><img src="img/brand_gps.png" alt="CIE2013"></a>
-		<div id="oted">Oficina Técnica de Estadísticas Departamentales</div>
-	</div>
-
-	<div class="container">
-
-		<div class="starter-template">
-
-			<label for="codigo_local">Código de Local</label>
-			<input type="text" id="codigo_local" name="codigo_local" placeholder="Ingrese el codigo de local">
-			<button type="submit" onclick="get_photo();">Consultar</button>
-
-			<H1>Fotos del Capítulo 3</H1>
-			<div id="cap3" name="cap3">
-			</div>
-
-		</div>
-
-	</div>
 
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript" src="js/modernizr.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery.shuffle.min.js"></script>	
 
-</body>
-</html>
 
 <script type="text/javascript">
 		
@@ -60,7 +38,7 @@
 					var ruta3 = $marker.attr('ruta_foto3');
 
 					// html += '<p> el codigo = '+codigo+', el predio = '+predio+' y la ruta = '+ruta3+' </p>';
-					html += '<img src="img/fotos/'+ruta3+'" width="100%">'
+					html += '<img src="files/'+ruta3+'" width="100%">'
 
 				});
 
@@ -71,4 +49,98 @@
 
 	// });
 
-</script>
+</script>	
+
+
+	<script>
+		$(document).ready(function() {
+
+			/* initialize shuffle plugin */
+			var $grid = $('#grid');
+
+			$grid.shuffle({
+				itemSelector: '.item' // the selector for the items in the grid
+			});
+
+			/* reshuffle when user clicks a filter item */
+			$('#filter a').click(function (e) {
+				e.preventDefault();
+
+				// set active class
+				$('#filter a').removeClass('active');
+				$(this).addClass('active');
+
+				// get group name from clicked item
+				var groupName = $(this).attr('data-group');
+
+				// reshuffle grid
+				$grid.shuffle('shuffle', groupName );
+			});
+
+		});
+	</script>	
+
+</head>
+<body>
+	
+	<div id="header" style="display: block;">
+		<a id="logo" href="#"><img src="img/brand_gps.png" alt="CIE2013"></a>
+		<div id="oted">Oficina Técnica de Estadísticas Departamentales</div>
+	</div>
+
+	<div class="container">
+
+
+		<div class="row">
+
+<ul id="filter">
+    <li><a class="active" href="#" data-group="all">All</a></li>
+    <li><a href="#" data-group="red">Cap. 3</a></li>
+    <li><a href="#" data-group="green">Cap. 4</a></li>
+    <li><a href="#" data-group="blue">Cap. 5</a></li>
+</ul>
+ 
+<div id="grid">
+    <div class="item blue"  data-groups='["all", "numbers", "blue", "square"]'>3</div>
+    <div class="item green" data-groups='["all", "numbers", "green", "square"]'>5</div>
+    <div class="item blue"  data-groups='["all", "letters", "blue", "square"]'>D</div>
+    <div class="item red"   data-groups='["all", "numbers", "red", "square"]'>1</div>
+    <div class="item red circle"   data-groups='["all", "numbers", "red", "circle"]'>4</div>
+    <div class="item red"   data-groups='["all", "numbers", "red", "square"]'>7</div>
+    <div class="item green circle" data-groups='["all", "numbers", "green", "circle"]'>8</div>
+    <div class="item red"   data-groups='["all", "letters", "red", "square"]'>B</div>
+    <div class="item green" data-groups='["all", "numbers", "green", "square"]'>2</div>
+    <div class="item green circle" data-groups='["all", "letters", "green", "circle"]'>C</div>
+    <div class="item blue"  data-groups='["all", "numbers", "blue", "square"]'>9</div>
+    <div class="item red"   data-groups='["all", "letters", "red", "square"]'>E</div>
+    <div class="item blue circle"  data-groups='["all", "letters", "blue", "circle"]'>G</div>
+    <div class="item blue"  data-groups='["all", "letters", "blue", "square"]'>A</div>
+    <div class="item blue"  data-groups='["all", "numbers", "blue", "square"]'>6</div>
+    <div class="item green" data-groups='["all", "letters", "green", "square"]'>F</div>
+</div>
+
+		</div>
+
+
+
+
+
+		<div class="starter-template">
+
+			<label for="codigo_local">Código de Local</label>
+			<input type="text" id="codigo_local" name="codigo_local" placeholder="Ingrese el codigo de local">
+			<button type="submit" onclick="get_photo();">Consultar</button>
+
+			<H1>Fotos del Capítulo 3</H1>
+			<div id="cap3" name="cap3">
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+</body>
+</html>
+

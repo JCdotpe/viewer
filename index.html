@@ -60,6 +60,19 @@
 
 				// reshuffle grid
 				$grid.shuffle('shuffle', groupName );
+
+				var val = $('.js-shuffle-search').val();
+
+				$grid.shuffle('shuffle', function($el, shuffle) {
+
+					// Only search elements in the current group
+					if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
+						return false;
+					}
+
+					var text = $.trim( $el.find('.picture-item__title').text() );
+					return text.indexOf(val) !== -1;
+				});
 			});
 
 			

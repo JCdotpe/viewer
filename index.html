@@ -19,47 +19,32 @@
 	<script type="text/javascript" src="js/modernizr.custom.min.js"></script>
 	<script type="text/javascript" src="js/jquery.shuffle.min.js"></script>	
 
-
-<script type="text/javascript">
-		
-	// $(document).ready(function(){
-
-		function get_photo() {
-
-			var html = '';
-			var cod = $('#codigo_local').val();
-
-			$.get('xml/photo.xml', function(d) {
-			
-				$(d).find('marker[id_local="'+cod+'"]').each(function() {
-					var $marker = $(this);
-					var codigo = $marker.attr('id_local');
-					var predio = $marker.attr('nro_pred');
-					var ruta3 = $marker.attr('ruta_foto3');
-
-					// html += '<p> el codigo = '+codigo+', el predio = '+predio+' y la ruta = '+ruta3+' </p>';
-					html += '<img src="files/'+ruta3+'" width="100%">'
-
-				});
-
-				$('#cap3').html(html);
-			});
-			
-		}
-
-	// });
-
-</script>	
-
-
 	<script>
 		$(document).ready(function() {
 
 			/* initialize shuffle plugin */
 			var $grid = $('#grid');
 
-			$grid.shuffle({
-				itemSelector: '.item' // the selector for the items in the grid
+			var src_cap3 = '';
+
+			$.get('xml/photo.xml', function(d) {
+			
+				$(d).find('marker').each(function() {
+					var $marker = $(this);
+					var codigo = $marker.attr('id_local');
+					var capitulo = $marker.attr('cap');
+					var ruta = $marker.attr('ruta_foto');
+
+					src_cap3 += '<div class="item '+capitulo+'"  data-groups=\'["all", "cap'+capitulo+'"]\' data-title="'+codigo+'"><img src="files/'+ruta+'" width="100%">';
+					src_cap3 += '<figcaption class="picture-item__title"><a href="#">'+codigo+'</a></figcaption>';
+					src_cap3 += '</div>';
+
+				});
+
+				$('#grid').html(src_cap3);
+				$grid.shuffle({
+					itemSelector: '.item' // the selector for the items in the grid
+				});
 			});
 
 			/* reshuffle when user clicks a filter item */
@@ -77,6 +62,23 @@
 				$grid.shuffle('shuffle', groupName );
 			});
 
+			
+
+			$('.js-shuffle-search').on('keyup change', function() {
+				var val = $(this).val();
+
+				$grid.shuffle('shuffle', function($el, shuffle) {
+
+					// Only search elements in the current group
+					if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
+						return false;
+					}
+
+					var text = $.trim( $el.find('.picture-item__title').text() );
+					return text.indexOf(val) !== -1;
+				});
+			});
+
 		});
 	</script>	
 
@@ -90,54 +92,27 @@
 
 	<div class="container">
 
-
-		<div class="row">
-
 		<div class="starter-template">
 
 			<label for="codigo_local">Código de Local</label>
-			<input type="text" id="codigo_local" name="codigo_local" placeholder="Ingrese el codigo de local">
-			<button type="submit" onclick="get_photo();">Consultar</button>
-
-			<H1>Fotos del Capítulo 3</H1>
-			<div id="cap3" name="cap3">
-			</div>
-
-		</div>		
-
-<ul id="filter">
-    <li><a class="active" href="#" data-group="all">All</a></li>
-    <li><a href="#" data-group="red">Cap. 3</a></li>
-    <li><a href="#" data-group="green">Cap. 4</a></li>
-    <li><a href="#" data-group="blue">Cap. 5</a></li>
-</ul>
- 
-<div id="grid">
-    <div class="item blue"  data-groups='["all", "numbers", "blue", "square"]'>3</div>
-    <div class="item green" data-groups='["all", "numbers", "green", "square"]'>5</div>
-    <div class="item blue"  data-groups='["all", "letters", "blue", "square"]'>D</div>
-    <div class="item red"   data-groups='["all", "numbers", "red", "square"]'>1</div>
-    <div class="item red circle"   data-groups='["all", "numbers", "red", "circle"]'>4</div>
-    <div class="item red"   data-groups='["all", "numbers", "red", "square"]'>7</div>
-    <div class="item green circle" data-groups='["all", "numbers", "green", "circle"]'>8</div>
-    <div class="item red"   data-groups='["all", "letters", "red", "square"]'>B</div>
-    <div class="item green" data-groups='["all", "numbers", "green", "square"]'>2</div>
-    <div class="item green circle" data-groups='["all", "letters", "green", "circle"]'>C</div>
-    <div class="item blue"  data-groups='["all", "numbers", "blue", "square"]'>9</div>
-    <div class="item red"   data-groups='["all", "letters", "red", "square"]'>E</div>
-    <div class="item blue circle"  data-groups='["all", "letters", "blue", "circle"]'>G</div>
-    <div class="item blue"  data-groups='["all", "letters", "blue", "square"]'>A</div>
-    <div class="item blue"  data-groups='["all", "numbers", "blue", "square"]'>6</div>
-    <div class="item green" data-groups='["all", "letters", "green", "square"]'>F</div>
-</div>
-
+			<input type="text" id="codigo_local" name="codigo_local" placeholder="Ingrese el codigo de local" class="js-shuffle-search">
+			
 		</div>
 
+		<div class="row">
 
+			<ul id="filter">
+				<li><a class="active" href="#" data-group="all">Todos</a></li>
+				<li id="cap3"><a href="#" data-group="cap3">Cap. 3</a></li>
+				<li id="cap4"><a href="#" data-group="cap4">Cap. 4</a></li>
+				<li id="cap5"><a href="#" data-group="cap5">Cap. 5</a></li>
+			</ul>
 
+			<div id="grid">
+				
+			</div>
 
-
-
+		</div>
 
 	</div>
 

@@ -31,94 +31,99 @@
 
 	$j11(document).ready(function($){
 
-		$('#consultar').click(function(e){
-			var valor = $('#codigo_local').val();
+		$('#codigo_local').keyup(function() {
 
-			var categorias = '';
-			categorias ='<li class="all active"><a href="#">Todos</a></li>' +
-						'<li class="cap-3"><a href="#" title="Category 1">Georeferenciación</a></li>'+
-						'<li class="cap-4"><a href="#" title="Category 2">Croquis de ubicación</a></li>'+
-						'<li class="cap-5"><a href="#" title="Category 3">Esquema de distribución de espacios</a></li>';
+			if ( $(this).val().length == 6 )
+			{
+				var valor = $('#codigo_local').val();
 
-			$('#capitulos').html(categorias);
+				var categorias = '';
+				categorias ='<li class="all active"><a href="#">Todos</a></li>' +
+							// '<li class="cap-3"><a href="#" title="Category 1">Georeferenciación</a></li>'+
+							'<li class="cap-4"><a href="#" title="Category 2">Croquis de ubicación</a></li>'+
+							'<li class="cap-5"><a href="#" title="Category 3">Esquema de distribución de espacios</a></li>';
 
-			var contenido = '';
-			var inc = 0;
+				$('#capitulos').html(categorias);
 
-			$.get('xml/photo.xml', function(d) {
-			
-				$(d).find('marker[id_local="'+valor+'"]').each(function() {
-					var $marker = $(this);
-					var codigo = $marker.attr('id_local');
-					var capitulo = $marker.attr('cap');
-					var ruta = $marker.attr('ruta_foto');
+				var contenido = '';
+				var inc = 0;
 
-					contenido += '<li class="portfolio-item2" data-id="id-'+inc+'" data-type="cap-'+capitulo+'">' + 
-							'<div>' + 
-								'<span class="image-block">' + 
-									'<a class="image-zoom" href="files/'+ruta+'" rel="prettyPhoto[gallery]" title="Cap '+capitulo+'">' + 
-										'<img width="225" height="140" src="files/'+ruta+'" alt="Cap '+capitulo+'" title="Cap '+capitulo+'" />' + 
-									'</a>' + 
-								'</span>' + 
-								'<div class="home-portfolio-text">' + 
-									'<h2 class="post-title-portfolio"><a href="#" rel="bookmark" title="'+codigo+'">'+codigo+'</a></h2>' + 
-									'<p class="post-subtitle-portfolio">Capitulo '+capitulo+'</p>' + 
-								'</div>' + 
-							'</div>' + 
-						'</li>';
-
-					inc++;
-
-				});
-
-				$('#area').html(contenido);
-
-				jQuery("a[rel^='prettyPhoto']").prettyPhoto({
-					animationSpeed:'fast',
-					slideshow:5000,
-					theme:'light_rounded',
-					show_title:false,
-					overlay_gallery: false
-				});
+				$.get('xml/photo.xml', function(d) {
 				
-				if (jQuery().quicksand) {
+					$(d).find('marker[id_local="'+valor+'"]').each(function() {
+						var $marker = $(this);
+						var codigo = $marker.attr('id_local');
+						var predio = $marker.attr('nro_pred');
+						var capitulo = $marker.attr('cap');
+						var ruta = $marker.attr('ruta_foto');
 
-				 	// Clone applications to get a second collection
-					var $data = jQuery(".portfolio-area").clone();
-					
-					//NOTE: Only filter on the main portfolio page, not on the subcategory pages
-					jQuery('.portfolio-categ li').click(function(e) {
-						$(".filter li").removeClass("active");	
-						// Use the last category class as the category to filter by. This means that multiple categories are not supported (yet)
-						var filterClass=$(this).attr('class').split(' ').slice(-1)[0];
-						
-						if (filterClass == 'all') {
-							var $filteredData = $data.find('.portfolio-item2');
-						} else {
-							var $filteredData = $data.find('.portfolio-item2[data-type=' + filterClass + ']');
-						}
-						jQuery(".portfolio-area").quicksand($filteredData, {
-							duration: 600,
-							adjustHeight: 'auto'
-						}, function () {
+						contenido += '<li class="portfolio-item2" data-id="id-'+inc+'" data-type="cap-'+capitulo+'">' + 
+								'<div>' + 
+									'<span class="image-block">' + 
+										'<a class="image-zoom" href="files/'+ruta+'" rel="prettyPhoto[gallery]" title="Cap '+capitulo+'">' + 
+											'<img width="225" height="140" src="files/'+ruta+'" alt="Cap '+capitulo+'" title="Cap '+capitulo+'" />' + 
+										'</a>' + 
+									'</span>' + 
+									'<div class="home-portfolio-text">' + 
+										'<h2 class="post-title-portfolio"><a href="#" rel="bookmark" title="'+codigo+'">'+codigo+' - '+predio+'</a></h2>' + 
+										'<p class="post-subtitle-portfolio">Capitulo '+capitulo+'</p>' + 
+									'</div>' + 
+								'</div>' + 
+							'</li>';
 
-								jQuery("a[rel^='prettyPhoto']").prettyPhoto({
-									animationSpeed:'fast',
-									slideshow:5000,
-									theme:'light_rounded',
-									show_title:false,
-									overlay_gallery: false
-								});
+						inc++;
 
-										});	
-						$(this).addClass("active"); 			
-						return false;
+					});
+
+					$('#area').html(contenido);
+
+					jQuery("a[rel^='prettyPhoto']").prettyPhoto({
+						animationSpeed:'fast',
+						slideshow:5000,
+						theme:'light_rounded',
+						show_title:false,
+						overlay_gallery: false
 					});
 					
-				}
-				
-			});
+					if (jQuery().quicksand) {
 
+					 	// Clone applications to get a second collection
+						var $data = jQuery(".portfolio-area").clone();
+						
+						//NOTE: Only filter on the main portfolio page, not on the subcategory pages
+						jQuery('.portfolio-categ li').click(function(e) {
+							$(".filter li").removeClass("active");	
+							// Use the last category class as the category to filter by. This means that multiple categories are not supported (yet)
+							var filterClass=$(this).attr('class').split(' ').slice(-1)[0];
+							
+							if (filterClass == 'all') {
+								var $filteredData = $data.find('.portfolio-item2');
+							} else {
+								var $filteredData = $data.find('.portfolio-item2[data-type=' + filterClass + ']');
+							}
+							jQuery(".portfolio-area").quicksand($filteredData, {
+								duration: 600,
+								adjustHeight: 'auto'
+							}, function () {
+
+									jQuery("a[rel^='prettyPhoto']").prettyPhoto({
+										animationSpeed:'fast',
+										slideshow:5000,
+										theme:'light_rounded',
+										show_title:false,
+										overlay_gallery: false
+									});
+
+											});	
+							$(this).addClass("active"); 			
+							return false;
+						});
+						
+					}
+					
+				});
+			}
+			
 		});
 
 	})
@@ -137,8 +142,7 @@
 
 		<div class="starter-template">
 
-			<!-- <label for="codigo_local">Código de Local</label> -->
-			<input type="text" id="codigo_local" name="codigo_local" maxlength="6" placeholder="COD_LOCAL"> <button id="consultar">Consultar</button> 
+			<input type="text" id="codigo_local" name="codigo_local" maxlength="6" placeholder="COD_LOCAL">
 			
 		</div>
 

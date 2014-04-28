@@ -258,11 +258,70 @@ html, body, h1, h2, h3, h4, h5 { font-family: 'Open Sans', sans-serif; }
 
 /**** PORTFOLIO STYLES*****/
 .portfolio-categ{margin-bottom:30px;}
-.portfolio-categ li{display:inline;margin-right:10px;}
+.portfolio-categ li{display:inline;margin-right:30px;}
 .image-block{ display:block;position: relative;}
 .image-block img{border: 1px solid #d5d5d5; border-radius: 4px 4px 4px 4px;background:#FFFFFF;padding:10px;}
 .image-block img:hover{border: 1px solid #A9CF54;box-shadow:0 0 5px #A9CF54;}
 .portfolio-area li{float: left;margin: 0 12px 20px 0;overflow: hidden;width: 245px;padding:5px;}
-.home-portfolio-text{margin-top:10px;}
+.home-portfolio-text{margin-top:6px;}
 li.active a{ text-decoration:underline;}
 /**** END PORTFOLIO STYLES*****/
+
+
+body {
+background: #f5f5f5 url("../img/bkg-pat.png") repeat scroll 0 0;
+}
+
+.starter-template{
+    margin-top: 30px;
+}
+
+.starter-template #codigo_local{
+    border: 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 28px;
+    padding: 0 20px;
+    width: 175px;        
+    background: none;
+}
+
+
+.post-title-portfolio{
+    font-size: 1.5em;
+    margin: 3px 0;
+}
+
+.filter li a,
+.filter li.active a:hover,
+.filter li.active a:visited{
+    color: #3167BE;
+    text-decoration: none;    
+}
+
+.filter li.active a
+ {
+    text-decoration: underline;
+}
+
+
+
+.post-title-portfolio a {
+color: #3167BE;
+text-decoration: none;
+}
+
+.post-subtitle-portfolio{
+color: #a5a5a5;
+margin: 0;
+text-transform: uppercase;
+}
+
+.portfolio-categ{
+    padding-left: 20px;
+    margin-top: 40px;
+    text-transform: uppercase;
+}
+
+.portfolio-area{
+    padding: 0 16px;
+}

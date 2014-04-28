@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<meta name="viewport" content="width=device-width">
+	<meta name="description" content="">
+
+	<title>Visor de Imágenes del Censo de Infraestructura Educativa 2013</title>
+
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="js/modernizr.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery.shuffle.min.js"></script>	
+
+	<script>
+
+		$(document).ready(function() {
+
+			/* initialize shuffle plugin */
+			var $grid = $('#grid');
+
+			var src_cap3 = '';
+
+			$.get('xml/photo.xml', function(d) {
+			
+				$(d).find('marker').each(function() {
+					var $marker = $(this);
+					var codigo = $marker.attr('id_local');
+					var capitulo = $marker.attr('cap');
+					var ruta = $marker.attr('ruta_foto');
+
+					src_cap3 += '<div class="item '+capitulo+'"  data-groups=\'["all", "cap'+capitulo+'"]\' data-title="'+codigo+'"><img src="files/'+ruta+'" width="100%">';
+					src_cap3 += '<figcaption class="picture-item__title"><a href="#">'+codigo+'</a></figcaption>';
+					src_cap3 += '</div>';
+
+				});
+
+				$('#grid').html(src_cap3);
+				$grid.shuffle({
+					itemSelector: '.item' // the selector for the items in the grid
+				});
+			});
+
+			/* reshuffle when user clicks a filter item */
+			$('#filter a').click(function (e) {
+				e.preventDefault();
+
+				// set active class
+				$('#filter a').removeClass('active');
+				$(this).addClass('active');
+
+				// get group name from clicked item
+				var groupName = $(this).attr('data-group');
+
+				// reshuffle grid
+				$grid.shuffle('shuffle', groupName );
+
+
+				$('.js-shuffle-search').trigger('keyup');
+			});
+			
+
+			$('.js-shuffle-search').on('keyup change', function() {
+				var val = $(this).val();
+
+				$grid.shuffle('shuffle', function($el, shuffle) {
+
+					// Only search elements in the current group
+					if (shuffle.group !== 'all' && $.inArray(shuffle.group, $el.data('groups')) === -1) {
+						return false;
+					}
+
+					var text = $.trim( $el.find('.picture-item__title').text() );
+					return text.indexOf(val) !== -1;
+				});
+			});
+
+		});
+	</script>	
+
+</head>
+<body>
+	
+	<div id="header" style="display: block;">
+		<a id="logo" href="#"><img src="img/brand_gps.png" alt="CIE2013"></a>
+		<div id="oted">Oficina Técnica de Estadísticas Departamentales</div>
+	</div>
+
+	<div class="container">
+
+		<div class="starter-template">
+
+			<label for="codigo_local">Código de Local</label>
+			<input type="text" id="codigo_local" name="codigo_local" placeholder="Ingrese el codigo de local" class="js-shuffle-search">
+			
+		</div>
+
+		<div class="row">
+
+			<ul id="filter">
+				<li><a class="active" href="#" data-group="all">Todos</a></li>
+				<li id="cap3"><a href="#" data-group="cap3">Cap. 3</a></li>
+				<li id="cap4"><a href="#" data-group="cap4">Cap. 4</a></li>
+				<li id="cap5"><a href="#" data-group="cap5">Cap. 5</a></li>
+			</ul>
+
+			<div id="grid">
+				
+			</div>
+
+		</div>
+
+	</div>
+
+</body>
+</html>
+

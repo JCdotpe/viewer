@@ -22,6 +22,23 @@
 	<!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
 	<!-- <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> -->
 
+	<style>
+
+	#ubicacion{
+	padding-left: 20px; margin-top: 20px}
+
+
+#filter_div{
+	padding-left: 20px; margin-top: 20px; position: relative;
+}
+
+#filter_div select{
+	padding: 3px 5px;
+	border: 1px solid #ccc;
+}
+
+</style>
+
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script>var $j11 = jQuery.noConflict(true);</script>
 
@@ -51,7 +68,7 @@
 							var prov_nombre = $marker.attr('prov_nombre');
 							var dist_nombre = $marker.attr('dist_nombre');
 
-							ubicacion += 'Departamento: '+dpto_nombre+', Provincia: '+prov_nombre+', Distrito: '+dist_nombre;
+							ubicacion += '<b>Departamento:</b> '+dpto_nombre+' /  <b>Provincia:</b> '+prov_nombre+' /  <b>Distrito:</b> '+dist_nombre;
 						});
 
 						$('#ubicacion').html(ubicacion);
@@ -226,6 +243,7 @@
 			$('#depa').append('<option value="0">SELECCIONE...</option>');
 			$('#prov').html('<option value="0">SELECCIONE...</option>');
 			$('#dist').html('<option value="0">SELECCIONE...</option>');
+			$('#list_local').html('<option value="0">SELECCIONE...</option>');
 
 			load_ubigeo('DEP');
 		}
@@ -280,7 +298,7 @@
 			<input type="text" id="codigo_local" name="codigo_local" maxlength="6" placeholder="COD_LOCAL">
 			
 		</div>
-		<div>
+		<div id="filter_div">
 			<select id="depa" name="depa">
 				<!-- ajax -->
 			</select>

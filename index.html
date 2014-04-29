@@ -27,106 +27,241 @@
 
 	<script type="text/javascript">
 
-	$j11.noConflict();
+		$j11.noConflict();
 
-	$j11(document).ready(function($){
+		$j11(document).ready(function($){
 
-		$('#codigo_local').keyup(function() {
+			depa_region();
 
-			if ( $(this).val().length == 6 )
-			{
-				var valor = $('#codigo_local').val();
+			$('#codigo_local').keyup(function() {
 
-				var categorias = '';
-				categorias ='<li class="all active"><a href="#">Todos</a></li>' +
-							// '<li class="cap-3"><a href="#" title="Category 1">Georeferenciación</a></li>'+
-							'<li class="cap-4"><a href="#" title="Category 2">Croquis de ubicación</a></li>'+
-							'<li class="cap-5"><a href="#" title="Category 3">Esquema de distribución de espacios</a></li>';
+				valor = $(this).val();
+				if ( valor.length == 6 ){
+					
+					filterImg( valor );
 
-				$('#capitulos').html(categorias);
-
-				var contenido = '';
-				var inc = 0;
-
-				$.get('xml/photo.xml', function(d) {
+					$.get('xml/ubigeo.xml', function(d) {
 				
-					$(d).find('marker[id_local="'+valor+'"]').each(function() {
+						var ubicacion = '';
+
+						$(d).find('marker[id_local="'+valor+'"]').each(function() {
+							var $marker = $(this);
+							var codigo = $marker.attr('id_local');
+							var dpto_nombre = $marker.attr('dpto_nombre');
+							var prov_nombre = $marker.attr('prov_nombre');
+							var dist_nombre = $marker.attr('dist_nombre');
+
+							ubicacion += 'Departamento: '+dpto_nombre+', Provincia: '+prov_nombre+', Distrito: '+dist_nombre;
+						});
+
+						$('#ubicacion').html(ubicacion);
+
+					});
+
+				}else{
+					$('#depa').val(0);
+					$('#depa').trigger('change');
+					$('#capitulos').empty();
+					$('#area').empty();
+					$('#ubicacion').empty();
+				}
+				
+			});
+
+			$('#depa').change(function(event){
+
+				$('#prov').empty();
+				$("#prov").append('<option value="0">SELECCIONE...</option>');
+				if ( $(this).val() != 0 )  load_ubigeo('PROV');
+				$('#dist').html('<option value="0">SELECCIONE...</option>');
+				$('#list_local').html('<option value="0">SELECCIONE...</option>');
+
+			});
+
+			$('#prov').change(function(event){
+
+				$('#dist').empty();
+				$("#dist").append('<option value="0">SELECCIONE...</option>');
+				if ( $(this).val() != 0 ) load_ubigeo('DIST');
+				$('#list_local').html('<option value="0">SELECCIONE...</option>');
+
+			});
+
+			$('#dist').change(function(event){
+
+				var v_depa = $('#depa').val();
+				var v_prov = $('#prov').val();
+				var v_dist = $('#dist').val();
+
+				lista_locales = '<option value="0">SELECCIONE...</option>';
+
+				$.get('xml/ubigeo.xml', function(d) {
+				
+					$(d).find('marker[cod_dpto="'+v_depa+'"][cod_prov="'+v_prov+'"][cod_dist="'+v_dist+'"]').each(function() {
 						var $marker = $(this);
 						var codigo = $marker.attr('id_local');
-						var predio = $marker.attr('nro_pred');
-						var capitulo = $marker.attr('cap');
-						var ruta = $marker.attr('ruta_foto');
 
-						contenido += '<li class="portfolio-item2" data-id="id-'+inc+'" data-type="cap-'+capitulo+'">' + 
-								'<div>' + 
-									'<span class="image-block">' + 
-										'<a class="image-zoom" href="files/'+ruta+'" rel="prettyPhoto[gallery]" title="Cap '+capitulo+'">' + 
-											'<img width="225" height="140" src="files/'+ruta+'" alt="Cap '+capitulo+'" title="Cap '+capitulo+'" />' + 
-										'</a>' + 
-									'</span>' + 
-									'<div class="home-portfolio-text">' + 
-										'<h2 class="post-title-portfolio"><a href="#" rel="bookmark" title="'+codigo+'">'+codigo+' - '+predio+'</a></h2>' + 
-										'<p class="post-subtitle-portfolio">Capitulo '+capitulo+'</p>' + 
-									'</div>' + 
-								'</div>' + 
-							'</li>';
-
-						inc++;
+						lista_locales += '<option value="'+codigo+'">'+codigo+'</option>';
 
 					});
 
-					$('#area').html(contenido);
+					$("#list_local").html(lista_locales);
 
-					jQuery("a[rel^='prettyPhoto']").prettyPhoto({
-						animationSpeed:'fast',
-						slideshow:5000,
-						theme:'light_rounded',
-						show_title:false,
-						overlay_gallery: false
-					});
-					
-					if (jQuery().quicksand) {
-
-					 	// Clone applications to get a second collection
-						var $data = jQuery(".portfolio-area").clone();
-						
-						//NOTE: Only filter on the main portfolio page, not on the subcategory pages
-						jQuery('.portfolio-categ li').click(function(e) {
-							$(".filter li").removeClass("active");	
-							// Use the last category class as the category to filter by. This means that multiple categories are not supported (yet)
-							var filterClass=$(this).attr('class').split(' ').slice(-1)[0];
-							
-							if (filterClass == 'all') {
-								var $filteredData = $data.find('.portfolio-item2');
-							} else {
-								var $filteredData = $data.find('.portfolio-item2[data-type=' + filterClass + ']');
-							}
-							jQuery(".portfolio-area").quicksand($filteredData, {
-								duration: 600,
-								adjustHeight: 'auto'
-							}, function () {
-
-									jQuery("a[rel^='prettyPhoto']").prettyPhoto({
-										animationSpeed:'fast',
-										slideshow:5000,
-										theme:'light_rounded',
-										show_title:false,
-										overlay_gallery: false
-									});
-
-											});	
-							$(this).addClass("active"); 			
-							return false;
-						});
-						
-					}
-					
 				});
-			}
-			
+				
+			});
+
+			$('#list_local').change(function(event){
+
+				$('#codigo_local').val('');
+				$('#ubicacion').empty();
+
+				valor = $(this).val();
+				if ( valor != 0 ){
+					filterImg(valor);	
+				}else{
+					$('#capitulos').empty();
+					$('#area').empty();
+				}
+
+			});
+
 		});
 
-	})
+
+		function filterImg(valor) {
+
+			var categorias = '';
+			categorias ='<li class="all active"><a href="#">Todos</a></li>' +
+						// '<li class="cap-3"><a href="#" title="Category 1">Georeferenciación</a></li>'+
+						'<li class="cap-4"><a href="#" title="Category 2">Croquis de ubicación</a></li>'+
+						'<li class="cap-5"><a href="#" title="Category 3">Esquema de distribución de espacios</a></li>';
+
+			$('#capitulos').html(categorias);
+
+			var contenido = '';
+			var inc = 0;
+
+			$.get('xml/photo.xml', function(d) {
+				
+				// 'marker[id_local="'+valor+'"][nro_pred="1"]'
+				$(d).find('marker[id_local="'+valor+'"]').each(function() {
+					var $marker = $(this);
+					var codigo = $marker.attr('id_local');
+					var predio = $marker.attr('nro_pred');
+					var capitulo = $marker.attr('cap');
+					var ruta = $marker.attr('ruta_foto');
+
+					contenido += '<li class="portfolio-item2" data-id="id-'+inc+'" data-type="cap-'+capitulo+'">' + 
+							'<div>' + 
+								'<span class="image-block">' + 
+									'<a class="image-zoom" href="files/'+ruta+'" rel="prettyPhoto[gallery]" title="Cap '+capitulo+'">' + 
+										'<img width="225" height="140" src="files/'+ruta+'" alt="Cap '+capitulo+'" title="Cap '+capitulo+'" />' + 
+									'</a>' + 
+								'</span>' + 
+								'<div class="home-portfolio-text">' + 
+									'<h2 class="post-title-portfolio"><a href="#" rel="bookmark" title="'+codigo+'">'+codigo+' - '+predio+'</a></h2>' + 
+									'<p class="post-subtitle-portfolio">Capitulo '+capitulo+'</p>' + 
+								'</div>' + 
+							'</div>' + 
+						'</li>';
+
+					inc++;
+
+				});
+
+				$('#area').html(contenido);
+
+				jQuery("a[rel^='prettyPhoto']").prettyPhoto({
+					animationSpeed:'fast',
+					slideshow:5000,
+					theme:'light_rounded',
+					show_title:false,
+					overlay_gallery: false
+				});
+				
+				if (jQuery().quicksand) {
+
+				 	// Clone applications to get a second collection
+					var $data = jQuery(".portfolio-area").clone();
+					
+					//NOTE: Only filter on the main portfolio page, not on the subcategory pages
+					jQuery('.portfolio-categ li').click(function(e) {
+						$(".filter li").removeClass("active");	
+						// Use the last category class as the category to filter by. This means that multiple categories are not supported (yet)
+						var filterClass=$(this).attr('class').split(' ').slice(-1)[0];
+						
+						if (filterClass == 'all') {
+							var $filteredData = $data.find('.portfolio-item2');
+						} else {
+							var $filteredData = $data.find('.portfolio-item2[data-type=' + filterClass + ']');
+						}
+						jQuery(".portfolio-area").quicksand($filteredData, {
+							duration: 600,
+							adjustHeight: 'auto'
+						}, function () {
+
+								jQuery("a[rel^='prettyPhoto']").prettyPhoto({
+									animationSpeed:'fast',
+									slideshow:5000,
+									theme:'light_rounded',
+									show_title:false,
+									overlay_gallery: false
+								});
+
+										});	
+						$(this).addClass("active"); 
+						return false;
+					});
+					
+				}
+				
+			});
+			
+		}
+
+		function depa_region() {
+
+			$('#depa').empty();
+			$('#depa').append('<option value="0">SELECCIONE...</option>');
+			$('#prov').html('<option value="0">SELECCIONE...</option>');
+			$('#dist').html('<option value="0">SELECCIONE...</option>');
+
+			load_ubigeo('DEP');
+		}
+
+		
+		function load_ubigeo(name) {
+
+			indice1 = $('#depa option:selected').attr('id');
+			indice2 = $('#prov option:selected').attr('id');
+
+			$.ajax({
+				type: "POST",
+				url: "json/ubigeo.json",
+				dataType:'json',
+				success: function(json_data){
+
+					if ( name == 'DEP' ){
+						for (var k in json_data.Ubigeo) {
+							$("#depa").append('<option id="' + k + '" value="' + json_data.Ubigeo[k].CCDD + '" >' + json_data.Ubigeo[k].Nombre + '</option>');
+						}
+
+					}else if ( name == 'PROV'){
+						for (var k in json_data.Ubigeo[indice1].PROVINCIA) {
+							$("#prov").append('<option id="' + k + '" value="' + json_data.Ubigeo[indice1].PROVINCIA[k].CCPP + '" >' +json_data.Ubigeo[indice1].PROVINCIA[k].Nombre + '</option>');
+						}
+
+					}else if ( name == 'DIST'){
+						for (var k in json_data.Ubigeo[indice1].PROVINCIA[indice2].DISTRITO) {
+							$("#dist").append('<option id="' + k + '" value="' + json_data.Ubigeo[indice1].PROVINCIA[indice2].DISTRITO[k].CCDI + '" >' +json_data.Ubigeo[indice1].PROVINCIA[indice2].DISTRITO[k].Nombre + '</option>');
+						}
+
+					}
+				}
+			});
+
+		}
 
 	</script>
 	
@@ -144,6 +279,24 @@
 
 			<input type="text" id="codigo_local" name="codigo_local" maxlength="6" placeholder="COD_LOCAL">
 			
+		</div>
+		<div>
+			<select id="depa" name="depa">
+				<!-- ajax -->
+			</select>
+			<select id="prov" name="prov">
+				<!-- ajax -->
+			</select>
+			<select id="dist" name="dist">
+				<!-- ajax -->
+			</select>
+			<select id="list_local" name="list_local">
+				<!-- ajax -->
+			</select>
+		</div>
+
+		<div id="ubicacion">
+			<!-- ajax -->
 		</div>
 
 		<div class="row">

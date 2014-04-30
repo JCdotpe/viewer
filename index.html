@@ -59,16 +59,18 @@
 
 					$.get('xml/ubigeo.xml', function(d) {
 				
-						var ubicacion = '';
+						var ubicacion;
 
 						$(d).find('marker[id_local="'+valor+'"]').each(function() {
 							var $marker = $(this);
 							var codigo = $marker.attr('id_local');
+							var predio = $marker.attr('nro_pred');
 							var dpto_nombre = $marker.attr('dpto_nombre');
 							var prov_nombre = $marker.attr('prov_nombre');
 							var dist_nombre = $marker.attr('dist_nombre');
+							var centrop = $marker.attr('ccpp');
 
-							ubicacion += dpto_nombre+' > '+prov_nombre+' > '+dist_nombre+' > '+codigo;
+							ubicacion = dpto_nombre+' > '+prov_nombre+' > '+dist_nombre+' > '+centrop+' > ' +codigo+' > '+predio;
 						});
 
 						$('#ubicacion').html(ubicacion);
@@ -149,19 +151,16 @@
 		function filterImg(valor) {
 
 			var categorias = '';
-			categorias ='<li class="all active"><a href="#">Todas las Imágenes</a></li>' +
-						// '<li class="pred-1"><a href="#" title="Category 1">Georeferenciación</a></li>'+
-						'<li class="cap-4"><a href="#" title="Category 2">Imágenes de croquis de ubicación</a></li>'+
-						'<li class="cap-5"><a href="#" title="Category 3">Imágenes del esquema de distribución de espacios por número de piso</a></li>';
-
-			$('#capitulos').html(categorias);
-
 			var contenido = '';
 			var inc = 0;
-			var more_categorias = '';
-			var const_predio = 0;
+			var array_predio = [0];
 
 			$.get('xml/photo.xml', function(d) {
+
+				categorias ='<li class="all active"><a href="#">Todas las Imágenes</a></li>' +
+				 			// '<li class="pred-1"><a href="#" title="Category 1">Georeferenciación</a></li>'+
+							'<li class="cap-4"><a href="#" title="Category 2">Imágenes de croquis de ubicación</a></li>'+
+							'<li class="cap-5"><a href="#" title="Category 3">Imágenes del esquema de distribución de espacios por número de piso</a></li>';
 				
 				// 'marker[id_local="'+valor+'"][nro_pred="1"]'
 				$(d).find('marker[id_local="'+valor+'"]').each(function() {
@@ -171,14 +170,12 @@
 					var capitulo = $marker.attr('cap');
 					var ruta = $marker.attr('ruta_foto');
 
-					if ( const_predio == 0)
+					if ( $.inArray(predio.trim(),array_predio) == -1 )
 					{
-						more_categorias += '<li class="pred-'+predio+'"><a href="#" title="Predio '+predio+'">Predio Nro '+predio+'</a></li>';
-						const_predio = predio;
-					}else if ( const_predio != predio ) {
-						more_categorias += '<li class="pred-'+predio+'"><a href="#" title="Predio '+predio+'">Predio Nro '+predio+'</a></li>';
-						const_predio = predio;
+						categorias += '<li class="pred-'+predio+'"><a href="#" title="Predio '+predio+'">Predio Nro '+predio+'</a></li>';
+						array_predio.push(predio.trim());
 					}
+					
 
 					contenido += '<li class="portfolio-item2" data-id="id-'+inc+'" data-type="cap-'+capitulo+'" title="pred-'+predio+'">' + 
 							'<div>' + 
@@ -198,8 +195,8 @@
 
 				});
 
+				$('#capitulos').html(categorias);
 				$('#area').html(contenido);
-				$('#capitulos').append(more_categorias);
 
 				jQuery("a[rel^='prettyPhoto']").prettyPhoto({
 					animationSpeed:'fast',

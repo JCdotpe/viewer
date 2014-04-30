@@ -56,26 +56,27 @@
 				if ( valor.length == 6 ){
 					
 					filterImg( valor );
+					viewUbigeo( valor );
 
-					$.get('xml/ubigeo.xml', function(d) {
+					// $.get('xml/ubigeo.xml', function(d) {
 				
-						var ubicacion;
+					// 	var ubicacion;
 
-						$(d).find('marker[id_local="'+valor+'"]').each(function() {
-							var $marker = $(this);
-							var codigo = $marker.attr('id_local');
-							var predio = $marker.attr('nro_pred');
-							var dpto_nombre = $marker.attr('dpto_nombre');
-							var prov_nombre = $marker.attr('prov_nombre');
-							var dist_nombre = $marker.attr('dist_nombre');
-							var centrop = $marker.attr('ccpp');
+					// 	$(d).find('marker[id_local="'+valor+'"]').each(function() {
+					// 		var $marker = $(this);
+					// 		var codigo = $marker.attr('id_local');
+					// 		var predio = $marker.attr('nro_pred');
+					// 		var dpto_nombre = $marker.attr('dpto_nombre');
+					// 		var prov_nombre = $marker.attr('prov_nombre');
+					// 		var dist_nombre = $marker.attr('dist_nombre');
+					// 		var centrop = $marker.attr('ccpp');
 
-							ubicacion = dpto_nombre+' > '+prov_nombre+' > '+dist_nombre+' > '+centrop+' > ' +codigo+' > '+predio;
-						});
+					// 		ubicacion = dpto_nombre+' > '+prov_nombre+' > '+dist_nombre+' > '+centrop+' > Local ' +codigo+' > Nro Predios '+predio;
+					// 	});
 
-						$('#ubicacion').html(ubicacion);
+					// 	$('#ubicacion').html(ubicacion);
 
-					});
+					// });
 
 				}else{
 					$('#depa').val(0);
@@ -137,7 +138,8 @@
 
 				valor = $(this).val();
 				if ( valor != 0 ){
-					filterImg(valor);	
+					filterImg( valor );
+					viewUbigeo( valor );
 				}else{
 					$('#capitulos').empty();
 					$('#area').empty();
@@ -246,6 +248,28 @@
 				
 			});
 			
+		}
+
+		function viewUbigeo (valor) {
+			$.get('xml/ubigeo.xml', function(d) {
+				
+				var ubicacion;
+
+				$(d).find('marker[id_local="'+valor+'"]').each(function() {
+					var $marker = $(this);
+					var codigo = $marker.attr('id_local');
+					var predio = $marker.attr('nro_pred');
+					var dpto_nombre = $marker.attr('dpto_nombre');
+					var prov_nombre = $marker.attr('prov_nombre');
+					var dist_nombre = $marker.attr('dist_nombre');
+					var centrop = $marker.attr('ccpp');
+
+					ubicacion = dpto_nombre+' > '+prov_nombre+' > '+dist_nombre+' > '+centrop+' > Local ' +codigo+' > Nro Predios '+predio;
+				});
+
+				$('#ubicacion').html(ubicacion);
+
+			});
 		}
 
 		function depa_region() {

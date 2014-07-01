@@ -1,8 +1,8 @@
 <?php
 
-$servidor = "192.168.201.43";
-$usuario = "bpalomino";
-$password = "inei2201";
+$servidor = "192.168.194.167";
+$usuario = "jsancheza";
+$password = "123456";
 $bd = "CIE2013"; 
 
 $bdconexion = mssql_connect($servidor, $usuario, $password) or die("Error:" . mssql_get_last_message());

@@ -96,13 +96,24 @@
 				lista_locales = '<option value="0">SELECCIONE...</option>';
 
 				$.get('xml/ubigeo.xml', function(d) {
+
+					var validate_codigo = '';
 				
 					$(d).find('marker[cod_dpto="'+v_depa+'"][cod_prov="'+v_prov+'"][cod_dist="'+v_dist+'"]').each(function() {
 						var $marker = $(this);
 						var codigo = $marker.attr('id_local');
 
-						lista_locales += '<option value="'+codigo+'">'+codigo+'</option>';
-
+						if (validate_codigo == '') 
+						{
+							validate_codigo = codigo;
+							lista_locales += '<option value="'+codigo+'">'+codigo+'</option>';
+						}
+						else if ( validate_codigo != codigo)
+						{
+							validate_codigo = codigo;
+							lista_locales += '<option value="'+codigo+'">'+codigo+'</option>';
+						}
+						
 					});
 
 					$("#list_local").html(lista_locales);
